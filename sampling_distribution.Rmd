@@ -1,0 +1,232 @@
+---
+title: "The Sampling Distribution of the Mean"
+author: "Alyssah"
+date: "June 10, 2026"
+output:
+  html_notebook:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+---
+
+## 1. The Population
+
+We start with a **skewed population** — drawn from an exponential distribution. This is intentional: an exponential distribution looks nothing like a normal curve. Using a non-normal population lets us clearly observe the Central Limit Theorem at work later on.
+
+```{r population}
+set.seed(42)
+
+POPULATION_SIZE <- 100000
+population <- rexp(POPULATION_SIZE, rate = 0.5)
+
+pop_mean <- mean(population)
+pop_sd   <- sd(population)
+
+ggplot(data.frame(x = population), aes(x = x)) +
+  geom_histogram(bins = 80, fill = "#6B7280", color = "white", alpha = 0.85) +
+  geom_vline(xintercept = pop_mean, color = "#d7191c", linewidth = 1, linetype = "dashed") +
+  annotate("text",
+           x = pop_mean + 1, y = Inf, vjust = 2,
+           label = paste0("Population mean = ", round(pop_mean, 2)),
+           color = "#d7191c", size = 4) +
+  labs(
+    title = "Our Population",
+    subtitle = paste0("Exponential distribution  |  N = ", format(POPULATION_SIZE, big.mark = ","),
+                      "  |  μ = ", round(pop_mean, 2),
+                      "  |  σ = ", round(pop_sd, 2)),
+    x = "Value", y = "Count"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+**What you should notice:** The population is heavily right-skewed. Most values are near zero but a long tail stretches to the right. This is a realistic shape — income distributions, wait times, and many natural phenomena look like this.
+
+---
+
+## 2. What Is a Sampling Distribution?
+
+If you draw a random sample of size *n* from this population and compute the sample mean, you get one number. Do that 1,000 times and you have 1,000 sample means. The distribution of those means is called the **sampling distribution of the mean**.
+
+The key question: *what does that distribution look like, and how does sample size change it?*
+
+We'll answer this by running the experiment at three sample sizes:
+
+| Label  | Sample size *n* |
+|--------|----------------|
+| Small  | 5              |
+| Medium | 30             |
+| Large  | 100            |
+
+---
+
+## 3. Simulating 1,000 Samples
+
+```{r simulate}
+N_SAMPLES   <- 1000
+small_n     <- 5
+medium_n    <- 30
+large_n     <- 100
+
+sample_means <- function(pop, n, reps) {
+  replicate(reps, mean(sample(pop, size = n, replace = FALSE)))
+}
+
+means_small  <- sample_means(population, small_n,  N_SAMPLES)
+means_medium <- sample_means(population, medium_n, N_SAMPLES)
+means_large  <- sample_means(population, large_n,  N_SAMPLES)
+
+results <- bind_rows(
+  data.frame(sample_mean = means_small,  size = paste0("Small (n = ",  small_n,  ")")),
+  data.frame(sample_mean = means_medium, size = paste0("Medium (n = ", medium_n, ")")),
+  data.frame(sample_mean = means_large,  size = paste0("Large (n = ",  large_n,  ")"))
+) %>%
+  mutate(size = factor(size, levels = c(
+    paste0("Small (n = ",  small_n,  ")"),
+    paste0("Medium (n = ", medium_n, ")"),
+    paste0("Large (n = ",  large_n,  ")")
+  )))
+```
+
+We now have a data frame with 3,000 rows: 1,000 sample means for each of the three sample sizes.
+
+---
+
+## 4. Visualising the Three Sampling Distributions
+
+```{r plot-distributions, fig.height=7}
+panel_colors <- setNames(
+  c("#E07A5F", "#F4A261", "#2A9D8F"),
+  c(paste0("Small (n = ",  small_n,  ")"),
+    paste0("Medium (n = ", medium_n, ")"),
+    paste0("Large (n = ",  large_n,  ")"))
+)
+
+ggplot(results, aes(x = sample_mean, fill = size)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 40, color = "white", alpha = 0.85) +
+  stat_density(geom = "line", color = "black", linewidth = 0.7, adjust = 1.5) +
+  geom_vline(xintercept = pop_mean,
+             color = "#d7191c", linetype = "dashed", linewidth = 0.9) +
+  facet_wrap(~size, ncol = 1, scales = "free_y") +
+  scale_fill_manual(values = panel_colors, guide = "none") +
+  labs(
+    title = "Sampling Distribution of the Mean — 1,000 Simulations",
+    subtitle = "Red dashed line = true population mean",
+    x = "Sample Mean", y = "Density"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(strip.text = element_text(face = "bold", size = 12))
+```
+
+---
+
+## 5. Overlaid Comparison
+
+Placing all three distributions on one plot makes the shape and spread differences unmistakable.
+
+```{r plot-overlay, fig.height=5}
+ggplot(results, aes(x = sample_mean, color = size, fill = size)) +
+  geom_density(alpha = 0.20, linewidth = 1) +
+  geom_vline(xintercept = pop_mean,
+             color = "#d7191c", linetype = "dashed", linewidth = 0.9) +
+  scale_color_manual(values = panel_colors) +
+  scale_fill_manual(values = panel_colors) +
+  labs(
+    title = "Overlaid Sampling Distributions",
+    subtitle = "Larger samples → narrower, taller, more normal-shaped distributions",
+    x = "Sample Mean", y = "Density",
+    color = "Sample size", fill = "Sample size"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+**What you should notice:**
+
+- All three distributions are **centred on the true population mean** — sampling is unbiased regardless of *n*.
+- The small-sample distribution is wide and slightly skewed (it still carries echoes of the population's shape).
+- The medium and large distributions look increasingly **bell-shaped**, even though the underlying population is exponential.
+- The large-sample distribution is **tightly concentrated** — large samples give much more precise estimates.
+
+---
+
+## 6. The Central Limit Theorem in Numbers
+
+The **Central Limit Theorem (CLT)** tells us exactly what to expect. For samples of size *n* drawn from a population with mean μ and standard deviation σ:
+
+$$\bar{X} \sim \mathcal{N}\!\left(\mu,\ \frac{\sigma}{\sqrt{n}}\right) \quad \text{as } n \to \infty$$
+
+The quantity σ/√n is called the **standard error of the mean (SE)**. Let's compare the theoretical SE to what we actually observed in the simulation.
+
+```{r summary-table}
+summary_tbl <- results %>%
+  group_by(size) %>%
+  summarise(
+    n          = as.integer(sub(".*= (\\d+)\\)", "\\1", as.character(size[1]))),
+    observed_mean = round(mean(sample_mean), 4),
+    observed_se   = round(sd(sample_mean),   4),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    theoretical_se = round(pop_sd / sqrt(n), 4),
+    ratio          = round(observed_se / theoretical_se, 3)
+  )
+
+knitr::kable(summary_tbl,
+  col.names = c("Sample size", "n", "Observed mean", "Observed SE",
+                "Theoretical SE (σ/√n)", "Ratio (obs/theory)"),
+  caption   = "Comparison of observed simulation results vs. CLT predictions"
+)
+```
+
+The ratio column should be very close to 1.0, confirming the CLT prediction.
+
+---
+
+## 7. How Standard Error Shrinks with Sample Size
+
+```{r se-curve, fig.height=4.5}
+ns     <- 1:200
+se_df  <- data.frame(n = ns, se = pop_sd / sqrt(ns))
+vlines <- data.frame(n = c(small_n, medium_n, large_n),
+                     label = c("small", "medium", "large"),
+                     color = c("#E07A5F", "#F4A261", "#2A9D8F"))
+
+ggplot(se_df, aes(x = n, y = se)) +
+  geom_line(linewidth = 1, color = "#5C4033") +
+  geom_vline(data = vlines, aes(xintercept = n, color = label),
+             linetype = "dashed", linewidth = 0.9) +
+  geom_point(data = vlines, aes(x = n, y = pop_sd / sqrt(n), color = label),
+             size = 3) +
+  scale_color_manual(values = setNames(vlines$color, vlines$label)) +
+  labs(
+    title = "Standard Error vs. Sample Size",
+    subtitle = "SE = σ / √n  —  diminishing returns beyond ~50",
+    x = "Sample size (n)", y = "Standard Error",
+    color = "Our samples"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+**Key insight:** Going from n = 5 to n = 30 yields a dramatic drop in SE. Going from n = 30 to n = 100 helps, but the gains are smaller. Doubling the sample size cuts SE by a factor of √2 ≈ 1.41 — not 2. This is the law of **diminishing returns in sampling**.
+
+---
+
+## 8. Summary
+
+| Concept | What we saw |
+|---------|-------------|
+| **Unbiasedness** | All three sampling distributions centred on the true population mean μ. |
+| **Central Limit Theorem** | Even from a skewed exponential population, sample means became approximately normal as *n* grew. |
+| **Standard error** | SE = σ/√n — observed SEs matched the formula closely. |
+| **Diminishing returns** | Halving SE requires quadrupling *n*. |
+
+The sampling distribution of the mean is the foundation of **confidence intervals**, **hypothesis testing**, and almost every inferential statistic you will encounter. Understanding that the sample mean is itself a random variable — with its own distribution, mean, and spread — is the key conceptual leap in statistics.
