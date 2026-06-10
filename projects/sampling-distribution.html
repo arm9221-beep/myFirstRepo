@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sampling Distribution of the Mean — Alyssah Mack</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="site-header">
+    <nav class="nav">
+      <a class="nav-logo" href="../index.html">Alyssah Mack</a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Project content -->
+  <main class="project-page">
+
+    <a class="back-link" href="../index.html">&larr; Back to Home</a>
+
+    <header class="project-header">
+      <div class="card-tag">Statistics &middot; R &middot; Data Visualization</div>
+      <h1>Sampling Distribution of the Mean</h1>
+      <dl class="project-meta">
+        <dt>Date</dt>      <dd>June 2026</dd>
+        <dt>Context</dt>   <dd>Summer research-intensive bootcamp, NYU</dd>
+        <dt>Tools</dt>     <dd>R, ggplot2, dplyr, R Markdown</dd>
+      </dl>
+    </header>
+
+    <section>
+      <h2>Overview</h2>
+      <p>
+        This R Notebook is a simulation-based exploration of one of the most
+        important ideas in statistics: the <strong>sampling distribution of
+        the mean</strong> and the <strong>Central Limit Theorem (CLT)</strong>.
+      </p>
+      <p>
+        The population is drawn from an exponential distribution — heavily
+        right-skewed, nothing like a bell curve. That choice is intentional:
+        it makes the CLT's effect visually dramatic. Even though the underlying
+        data is skewed, the distribution of sample means converges toward a
+        normal distribution as sample size grows.
+      </p>
+    </section>
+
+    <section>
+      <h2>What This Project Demonstrates</h2>
+      <ul>
+        <li>
+          <strong>Central Limit Theorem</strong> — sample means drawn from a
+          skewed exponential population become approximately normal as n increases,
+          shown across 1,000 simulated samples at n = 5, 30, and 100.
+        </li>
+        <li>
+          <strong>Standard error formula</strong> — the observed spread of sample
+          means matches the theoretical prediction SE = &sigma;/&radic;n closely
+          at every sample size.
+        </li>
+        <li>
+          <strong>Unbiasedness</strong> — all three sampling distributions center
+          on the true population mean regardless of sample size.
+        </li>
+        <li>
+          <strong>Diminishing returns</strong> — halving the standard error requires
+          quadrupling the sample size, illustrated with a dedicated SE vs. n curve.
+        </li>
+        <li>
+          <strong>ggplot2 visualization</strong> — faceted histograms, overlaid
+          density curves, annotated reference lines, and a custom warm color palette.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Notebook</h2>
+      <p>
+        The full notebook includes all code, explanations, and rendered plots.
+        It was written in R Markdown and knitted to a self-contained HTML notebook.
+      </p>
+      <div class="notebook-cta">
+        <a class="btn" href="../sampling_distribution.nb.html" target="_blank" rel="noopener">
+          Open Full Notebook &nearr;
+        </a>
+      </div>
+      <div class="notebook-embed">
+        <iframe
+          src="../sampling_distribution.nb.html"
+          title="Sampling Distribution of the Mean — R Notebook"
+          loading="lazy">
+        </iframe>
+      </div>
+      <p class="embed-note">
+        The notebook is self-contained and may take a moment to load. Use the button
+        above to open it in a full tab.
+      </p>
+    </section>
+
+    <section>
+      <h2>Key Takeaways</h2>
+      <ul>
+        <li>
+          Larger samples produce narrower, taller sampling distributions —
+          more data means more precise estimates of the population mean.
+        </li>
+        <li>
+          The standard error shrinks as &radic;n, not n — there are real
+          diminishing returns to collecting more data.
+        </li>
+        <li>
+          The shape of the sampling distribution converges to normal regardless
+          of the population's shape, which is why so many statistical tests
+          assume normality even when raw data isn't.
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="contact">
+    <div class="container footer-content">
+      <p>Alyssah Mack &mdash; NYU, Gresham Lab</p>
+      <ul class="footer-links">
+        <li>
+          <a href="https://github.com/arm9221-beep" target="_blank" rel="noopener">
+            GitHub
+          </a>
+        </li>
+        <li>
+          <a href="mailto:arm9221@nyu.edu">arm9221@nyu.edu</a>
+        </li>
+      </ul>
+      <p class="footer-note">Built with HTML &amp; CSS</p>
+    </div>
+  </footer>
+
+</body>
+</html>
