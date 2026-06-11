@@ -1,17 +1,17 @@
 :root {
-  --terracotta: #E07A5F;
-  --amber:      #F4A261;
-  --sage:       #2A9D8F;
-  --bg:         #FAF7F2;
-  --bg-alt:     #FFF5EE;
-  --text:       #2C2C2C;
-  --text-muted: #6E6259;
+  --terracotta: #9B7EC8;
+  --amber:      #8AAED8;
+  --sage:       #6B7FC4;
+  --bg:         #F8F7FF;
+  --bg-alt:     #EEF0FB;
+  --text:       #2A2840;
+  --text-muted: #6B6085;
   --card-bg:    #FFFFFF;
-  --border:     #EAE0D8;
-  --footer-bg:  #E07A5F;
+  --border:     #DDDAF0;
+  --footer-bg:  #9B7EC8;
   --footer-text:#FFFFFF;
   --radius:     8px;
-  --shadow:     0 2px 12px rgba(0,0,0,0.07);
+  --shadow:     0 2px 12px rgba(100,80,180,0.08);
   --max-width:  960px;
 }
 
@@ -113,7 +113,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Hero ── */
 .hero {
-  background: linear-gradient(135deg, var(--bg) 55%, #FFF0E6 100%);
+  background: linear-gradient(135deg, var(--bg) 55%, #EDE7F6 100%);
   padding: 6rem 0 5rem;
 }
 
